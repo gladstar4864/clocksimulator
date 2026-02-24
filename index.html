@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clocksimulator.com - Online Analog Clock</title>
+  <meta name="description" content="A clean, fullscreen analog clock simulator. View the current time with rendered clock.">
+  <meta name="keywords" content="clock simulator, analog clock, online clock, fullscreen clock, current time">
+  <link rel="canonical" href="https://www.clocksimulator.com/">
+  <meta property="og:title" content="clocksimulator.com - Online Analog Clock">
+  <meta property="og:description" content="A clean, fullscreen analog clock simulator. View the current time with rendered clock.">
+  <meta property="og:url" content="https://www.clocksimulator.com/">a
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="clocksimulator.com">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="clocksimulator.com - Online Analog Clock">
+  <meta name="twitter:description" content="A clean, fullscreen analog clock simulator. View the current time with rendered clock.">
+  <link rel="icon" id="favicon" type="image/png">
+  <style>
+    :root {
+      --bg: #000000;
+      --clock-face: #0a0a0a;
+      --clock-border: #f5f5f5;
+      --tick: #d4d4d4;
+      --number: #fafafa;
+      --hour-hand: #fafafa;
+      --minute-hand: #d4d4d4;
+      --second-hand: #ef4444;
+      --center-dot: #ef4444;
+      --toggle-bg: #262626;
+      --toggle-knob: #e5e5e5;
+    }
+
+    body.light-mode {
+      --bg: #f0f0f0;
+      --clock-face: #ffffff;
+      --clock-border: #333333;
+      --tick: #333333;
+      --number: #222222;
+      --hour-hand: #222222;
+      --minute-hand: #444444;
+      --second-hand: #d63031;
+      --center-dot: #d63031;
+      --toggle-bg: #bbb;
+      --toggle-knob: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      transition: background 0.4s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .toggle-wrapper {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-label {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    .toggle-label input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--toggle-bg);
+      border-radius: 22px;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--toggle-knob);
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-label input:checked + .toggle-slider::before {
+      transform: translateX(18px);
+    }
+
+    .clock-container {
+      width: 90vmin;
+      height: 90vmin;
+    }
+
+    .clock-container svg {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="toggle-wrapper">
+    <label class="toggle-label" aria-label="Toggle light mode">
+      <input type="checkbox" id="themeToggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="clock-container">
+    <svg viewBox="0 0 200 200" id="clock">
+      <circle cx="100" cy="100" r="95" fill="var(--clock-face)" stroke="var(--clock-border)" stroke-width="2.5"/>
+
+      <g id="ticks"></g>
+      <g id="numbers"></g>
+
+      <line id="hourHand" x1="100" y1="100" x2="100" y2="45"
+            stroke="var(--hour-hand)" stroke-width="4.5" stroke-linecap="round"/>
+      <line id="minuteHand" x1="100" y1="100" x2="100" y2="28"
+            stroke="var(--minute-hand)" stroke-width="3" stroke-linecap="round"/>
+      <line id="secondHand" x1="100" y1="115" x2="100" y2="22"
+            stroke="var(--second-hand)" stroke-width="1.2" stroke-linecap="round"/>
+
+      <circle cx="100" cy="100" r="3.5" fill="var(--center-dot)"/>
+    </svg>
+  </div>
+
+  <script>
+    (function () {
+      const ticksGroup = document.getElementById('ticks');
+      const numbersGroup = document.getElementById('numbers');
+      const hourHand = document.getElementById('hourHand');
+      const minuteHand = document.getElementById('minuteHand');
+      const secondHand = document.getElementById('secondHand');
+      const themeToggle = document.getElementById('themeToggle');
+
+      const CX = 100, CY = 100, R = 85;
+
+      function addTick(degrees, length, width) {
+        const angle = (degrees - 90) * Math.PI / 180;
+        const x1 = CX + Math.cos(angle) * (R - length);
+        const y1 = CY + Math.sin(angle) * (R - length);
+        const x2 = CX + Math.cos(angle) * R;
+        const y2 = CY + Math.sin(angle) * R;
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', x1);
+        tick.setAttribute('y1', y1);
+        tick.setAttribute('x2', x2);
+        tick.setAttribute('y2', y2);
+        tick.setAttribute('stroke', 'var(--tick)');
+        tick.setAttribute('stroke-width', width);
+        tick.setAttribute('stroke-linecap', 'round');
+        ticksGroup.appendChild(tick);
+      }
+
+      for (let h = 0; h < 12; h++) {
+        addTick(h * 30, 10, '2');
+        addTick(h * 30 + 15, 5, '1');
+      }
+
+      for (let h = 1; h <= 12; h++) {
+        const angle = (h * 30 - 90) * Math.PI / 180;
+        const x = CX + Math.cos(angle) * (R - 20);
+        const y = CY + Math.sin(angle) * (R - 20);
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
+        text.setAttribute('fill', 'var(--number)');
+        text.setAttribute('font-size', '12');
+        text.setAttribute('font-family', '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif');
+        text.setAttribute('font-weight', '500');
+        text.textContent = h;
+        numbersGroup.appendChild(text);
+      }
+
+      function updateClock() {
+        const now = new Date();
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const millis = now.getMilliseconds();
+
+        const secondAngle = (seconds + millis / 1000) * 6;
+        const minuteAngle = (minutes + seconds / 60) * 6;
+        const hourAngle = (hours + minutes / 60) * 30;
+
+        hourHand.setAttribute('transform', 'rotate(' + hourAngle + ' 100 100)');
+        minuteHand.setAttribute('transform', 'rotate(' + minuteAngle + ' 100 100)');
+        secondHand.setAttribute('transform', 'rotate(' + secondAngle + ' 100 100)');
+
+        requestAnimationFrame(updateClock);
+      }
+
+      requestAnimationFrame(updateClock);
+
+      themeToggle.addEventListener('change', function () {
+        document.body.classList.toggle('light-mode', this.checked);
+      });
+
+      var faviconCanvas = document.createElement('canvas');
+      faviconCanvas.width = 32;
+      faviconCanvas.height = 32;
+      var faviconLink = document.getElementById('favicon');
+
+      function updateFavicon() {
+        var ctx = faviconCanvas.getContext('2d');
+        var size = 32;
+        var cx = size / 2;
+        var cy = size / 2;
+        var r = 14;
+
+        ctx.clearRect(0, 0, size, size);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#333333';
+        ctx.stroke();
+
+        var now = new Date();
+        var h = now.getHours() % 12;
+        var m = now.getMinutes();
+
+        var hourAngle = ((h + m / 60) * 30 - 90) * Math.PI / 180;
+        var minuteAngle = (m * 6 - 90) * Math.PI / 180;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(hourAngle) * 7, cy + Math.sin(hourAngle) * 7);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#222222';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(minuteAngle) * 10, cy + Math.sin(minuteAngle) * 10);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#444444';
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#222222';
+        ctx.fill();
+
+        faviconLink.href = faviconCanvas.toDataURL('image/png');
+      }
+
+      updateFavicon();
+      setInterval(updateFavicon, 60000);
+    })();
+  </script>
+</body>
+</html>
