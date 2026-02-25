@@ -39,6 +39,17 @@ Square:
 </iframe>
 ```
 
+Custom border radius:
+
+```html
+<iframe src="https://clocksimulator.com/?embed=true"
+  width="200" height="200" frameborder="0"
+  style="border:none; border-radius:16px; overflow:hidden;">
+</iframe>
+```
+
+The shape is controlled via the iframe's CSS `border-radius` — use `50%` for round, `0` for square, or any value like `8px`, `16px` for rounded corners.
+
 ### Parameters
 
 All parameters are optional and can be combined:
