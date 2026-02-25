@@ -71,6 +71,14 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .toggle-wrapper.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .toggle-label {
@@ -222,6 +230,22 @@
 
       themeToggle.addEventListener('change', function () {
         document.body.classList.toggle('light-mode', this.checked);
+      });
+
+      var toggleWrapper = document.querySelector('.toggle-wrapper');
+      var hideTimer;
+
+      function showToggle() {
+        toggleWrapper.classList.add('visible');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () { toggleWrapper.classList.remove('visible'); }, 1500);
+      }
+
+      document.addEventListener('mousemove', showToggle);
+      window.addEventListener('focus', showToggle);
+      window.addEventListener('blur', function () {
+        clearTimeout(hideTimer);
+        toggleWrapper.classList.remove('visible');
       });
 
       var faviconCanvas = document.createElement('canvas');
