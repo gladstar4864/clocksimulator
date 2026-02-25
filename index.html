@@ -314,6 +314,7 @@
     .clock-container {
       width: 90vmin;
       height: 90vmin;
+      transition: transform 10s ease-in-out;
     }
 
     .clock-container svg {
@@ -651,6 +652,21 @@
           }
         });
       }
+
+      var container = document.querySelector('.clock-container');
+      var burnInStep = 0;
+      var burnInRadius = 6;
+      var burnInPositions = 8;
+
+      function applyBurnInShift() {
+        var angle = (burnInStep % burnInPositions) * (2 * Math.PI / burnInPositions);
+        var dx = Math.round(Math.cos(angle) * burnInRadius * 10) / 10;
+        var dy = Math.round(Math.sin(angle) * burnInRadius * 10) / 10;
+        container.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
+        burnInStep++;
+      }
+
+      setInterval(applyBurnInShift, 600000);
     })();
   </script>
 </body>
