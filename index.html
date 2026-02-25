@@ -360,6 +360,37 @@
 
       const CX = 100, CY = 100, R = 85;
 
+      var params = new URLSearchParams(window.location.search);
+      var tzParam = params.get('tz');
+      var timezone = null;
+      if (tzParam) {
+        try {
+          Intl.DateTimeFormat(undefined, { timeZone: tzParam });
+          timezone = tzParam;
+        } catch (e) {}
+      }
+
+      if (timezone) {
+        document.title = 'clocksimulator.com - ' + timezone;
+      }
+
+      function getTime() {
+        var now = new Date();
+        if (!timezone) {
+          return { hours: now.getHours(), minutes: now.getMinutes(),
+                   seconds: now.getSeconds(), millis: now.getMilliseconds() };
+        }
+        var parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone, hour: 'numeric', minute: 'numeric',
+          second: 'numeric', hour12: false
+        }).formatToParts(now);
+        var get = function(type) {
+          return parseInt(parts.find(function(p) { return p.type === type; }).value);
+        };
+        return { hours: get('hour'), minutes: get('minute'),
+                 seconds: get('second'), millis: now.getMilliseconds() };
+      }
+
       function addTick(degrees, length, width) {
         const angle = (degrees - 90) * Math.PI / 180;
         const x1 = CX + Math.cos(angle) * (R - length);
@@ -403,11 +434,11 @@
       }
 
       function updateClock() {
-        const now = new Date();
-        const hours = now.getHours() % 12;
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        const millis = now.getMilliseconds();
+        const t = getTime();
+        const hours = t.hours % 12;
+        const minutes = t.minutes;
+        const seconds = t.seconds;
+        const millis = t.millis;
 
         const secondAngle = (seconds + millis / 1000) * 6;
         const minuteAngle = (minutes + seconds / 60) * 6;
@@ -488,9 +519,9 @@
         ctx.strokeStyle = '#333333';
         ctx.stroke();
 
-        var now = new Date();
-        var h = now.getHours() % 12;
-        var m = now.getMinutes();
+        var t = getTime();
+        var h = t.hours % 12;
+        var m = t.minutes;
 
         var hourAngle = ((h + m / 60) * 30 - 90) * Math.PI / 180;
         var minuteAngle = (m * 6 - 90) * Math.PI / 180;
