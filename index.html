@@ -458,7 +458,6 @@
 
     .embed-preview-wrap iframe {
       border: none;
-      border-radius: 50%;
     }
 
     .embed-code-wrap {
@@ -620,6 +619,13 @@
           <select id="embedBorder">
             <option value="show">Show</option>
             <option value="hide">Hide</option>
+          </select>
+        </div>
+        <div class="embed-field">
+          <label for="embedShape">Shape</label>
+          <select id="embedShape">
+            <option value="round">Round</option>
+            <option value="square">Square</option>
           </select>
         </div>
         <div class="embed-field">
@@ -949,6 +955,7 @@
         var embedThemeSelect = document.getElementById('embedTheme');
         var embedSecondsSelect = document.getElementById('embedSeconds');
         var embedBorderSelect = document.getElementById('embedBorder');
+        var embedShapeSelect = document.getElementById('embedShape');
         var embedWidthInput = document.getElementById('embedWidth');
         var embedHeightInput = document.getElementById('embedHeight');
         var embedPreview = document.getElementById('embedPreview');
@@ -975,12 +982,15 @@
           var qs = buildEmbedParams();
           var w = parseInt(embedWidthInput.value) || 200;
           var h = parseInt(embedHeightInput.value) || 200;
+          var isRound = embedShapeSelect.value === 'round';
+          var radius = isRound ? ' border-radius:50%;' : '';
           embedPreview.src = localBase + qs;
           embedPreview.width = Math.min(w, 120);
           embedPreview.height = Math.min(h, 120);
+          embedPreview.style.borderRadius = isRound ? '50%' : '0';
           var code = '<iframe src="' + prodBase + qs + '"\n' +
             '  width="' + w + '" height="' + h + '" frameborder="0"\n' +
-            '  style="border:none; border-radius:50%; overflow:hidden;">\n' +
+            '  style="border:none;' + radius + ' overflow:hidden;">\n' +
             '</iframe>';
           embedCodeEl.value = code;
         }
@@ -1013,6 +1023,7 @@
         embedThemeSelect.addEventListener('change', updateEmbed);
         embedSecondsSelect.addEventListener('change', updateEmbed);
         embedBorderSelect.addEventListener('change', updateEmbed);
+        embedShapeSelect.addEventListener('change', updateEmbed);
         embedWidthInput.addEventListener('input', updateEmbedDebounced);
         embedHeightInput.addEventListener('input', updateEmbedDebounced);
 

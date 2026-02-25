@@ -21,10 +21,21 @@ You can embed the clock on any website using an iframe. Click the **info button*
 
 ### Quick start
 
+Round (default):
+
 ```html
 <iframe src="https://clocksimulator.com/?embed=true"
   width="200" height="200" frameborder="0"
   style="border:none; border-radius:50%; overflow:hidden;">
+</iframe>
+```
+
+Square:
+
+```html
+<iframe src="https://clocksimulator.com/?embed=true"
+  width="200" height="200" frameborder="0"
+  style="border:none; overflow:hidden;">
 </iframe>
 ```
 
