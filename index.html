@@ -323,6 +323,186 @@
       width: 100%;
       height: 100%;
     }
+
+    body.embed-mode .toggle-wrapper {
+      display: none !important;
+    }
+
+    body.embed-mode .clock-container {
+      width: 100vmin;
+      height: 100vmin;
+      transition: none;
+    }
+
+    .embed-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .embed-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .embed-panel {
+      background: #1a1a1a;
+      color: #eee;
+      border-radius: 12px;
+      padding: 20px 24px;
+      max-width: 520px;
+      width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    body.light-mode .embed-panel {
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .embed-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .embed-panel-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .embed-close-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+      padding: 0;
+    }
+
+    .embed-close-btn:hover {
+      opacity: 1;
+    }
+
+    .embed-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 16px;
+      margin-bottom: 16px;
+    }
+
+    .embed-field label {
+      display: block;
+      font-size: 11px;
+      opacity: 0.6;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .embed-field input,
+    .embed-field select {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid rgba(128, 128, 128, 0.3);
+      border-radius: 6px;
+      background: rgba(128, 128, 128, 0.1);
+      color: inherit;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    .embed-field input:focus,
+    .embed-field select:focus {
+      outline: none;
+      border-color: rgba(128, 128, 128, 0.6);
+    }
+
+    .embed-field select option {
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    body.light-mode .embed-field select option {
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .embed-preview-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: rgba(128, 128, 128, 0.08);
+      border-radius: 8px;
+    }
+
+    .embed-preview-wrap iframe {
+      border: none;
+      border-radius: 50%;
+    }
+
+    .embed-code-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .embed-code {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid rgba(128, 128, 128, 0.3);
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      color: inherit;
+      font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    body.light-mode .embed-code {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .embed-copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .embed-copy-btn:hover {
+      background: #2563eb;
+    }
   </style>
 </head>
 <body>
@@ -378,8 +558,11 @@
       <a href="?tz=Europe/London">?tz=Europe/London</a><br>
       <a href="?tz=Asia/Tokyo">?tz=Asia/Tokyo</a><br>
       <br>
+      <a href="#" id="embedLink">Embed this clock &rarr;</a><br>
+      <br>
       Made by Timo Heimonen<br>
-      <a href="mailto:timo.heimonen@proton.me">timo.heimonen@proton.me</a>
+      <a href="mailto:timo.heimonen@proton.me">timo.heimonen@proton.me</a><br>
+      <a href="https://github.com/timoheimonen/clocksimulator" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 
@@ -399,6 +582,63 @@
 
       <circle cx="100" cy="100" r="3.5" fill="var(--center-dot)"/>
     </svg>
+  </div>
+
+  <div class="embed-overlay" id="embedOverlay">
+    <div class="embed-panel">
+      <div class="embed-panel-header">
+        <span class="embed-panel-title">Embed this clock</span>
+        <button class="embed-close-btn" id="embedCloseBtn" aria-label="Close">
+          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="15" y1="5" x2="5" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="embed-controls">
+        <div class="embed-field">
+          <label for="embedTz">Timezone</label>
+          <input type="text" id="embedTz" placeholder="e.g. Europe/Helsinki">
+        </div>
+        <div class="embed-field">
+          <label for="embedTheme">Theme</label>
+          <select id="embedTheme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+        <div class="embed-field">
+          <label for="embedSeconds">Second hand</label>
+          <select id="embedSeconds">
+            <option value="tick">Tick</option>
+            <option value="smooth">Smooth</option>
+            <option value="hide">Hidden</option>
+          </select>
+        </div>
+        <div class="embed-field">
+          <label for="embedBorder">Clock border</label>
+          <select id="embedBorder">
+            <option value="show">Show</option>
+            <option value="hide">Hide</option>
+          </select>
+        </div>
+        <div class="embed-field">
+          <label for="embedWidth">Width (px)</label>
+          <input type="number" id="embedWidth" value="200" min="50" max="1000">
+        </div>
+        <div class="embed-field">
+          <label for="embedHeight">Height (px)</label>
+          <input type="number" id="embedHeight" value="200" min="50" max="1000">
+        </div>
+      </div>
+      <div class="embed-preview-wrap">
+        <iframe id="embedPreview" width="120" height="120"></iframe>
+      </div>
+      <div class="embed-code-wrap">
+        <textarea class="embed-code" id="embedCode" readonly rows="3"></textarea>
+      </div>
+      <button class="embed-copy-btn" id="embedCopyBtn">Copy code</button>
+    </div>
   </div>
 
   <script>
@@ -426,6 +666,19 @@
           Intl.DateTimeFormat(undefined, { timeZone: tzParam });
           timezone = tzParam;
         } catch (e) {}
+      }
+
+      var embedMode = params.get('embed') === 'true';
+      var themeParam = params.get('theme');
+      var secondsParam = params.get('seconds');
+      var borderParam = params.get('border');
+
+      if (embedMode) {
+        document.body.classList.add('embed-mode');
+      }
+      if (themeParam === 'light') {
+        document.body.classList.add('light-mode');
+        themeToggle.checked = true;
       }
 
       if (timezone) {
@@ -495,6 +748,17 @@
       var secondModeToggle = document.getElementById('secondModeToggle');
       secondModeToggle.checked = true;
 
+      if (secondsParam === 'smooth') {
+        secondModeTick = false;
+        secondModeToggle.checked = false;
+      } else if (secondsParam === 'hide') {
+        secondHand.style.display = 'none';
+      }
+
+      if (borderParam === 'hide') {
+        document.querySelector('#clock > circle').setAttribute('stroke', 'none');
+      }
+
       secondModeToggle.addEventListener('change', function () {
         secondModeTick = this.checked;
       });
@@ -555,126 +819,211 @@
         }
       });
 
-      document.addEventListener('mousemove', showToggle);
-      window.addEventListener('focus', showToggle);
-      window.addEventListener('blur', function () {
-        clearTimeout(hideTimer);
-        toggleWrapper.classList.remove('visible');
-        closeAboutBubble();
-      });
+      if (!embedMode) {
+        document.addEventListener('mousemove', showToggle);
+        window.addEventListener('focus', showToggle);
+        window.addEventListener('blur', function () {
+          clearTimeout(hideTimer);
+          toggleWrapper.classList.remove('visible');
+          closeAboutBubble();
+        });
 
-      var faviconCanvas = document.createElement('canvas');
-      faviconCanvas.width = 32;
-      faviconCanvas.height = 32;
-      var faviconLink = document.getElementById('favicon');
+        var faviconCanvas = document.createElement('canvas');
+        faviconCanvas.width = 32;
+        faviconCanvas.height = 32;
+        var faviconLink = document.getElementById('favicon');
 
-      function updateFavicon() {
-        var ctx = faviconCanvas.getContext('2d');
-        var size = 32;
-        var cx = size / 2;
-        var cy = size / 2;
-        var r = 14;
+        function updateFavicon() {
+          var ctx = faviconCanvas.getContext('2d');
+          var size = 32;
+          var cx = size / 2;
+          var cy = size / 2;
+          var r = 14;
 
-        ctx.clearRect(0, 0, size, size);
+          ctx.clearRect(0, 0, size, size);
 
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#333333';
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#333333';
+          ctx.stroke();
 
-        var t = getTime();
-        var h = t.hours % 12;
-        var m = t.minutes;
+          var t = getTime();
+          var h = t.hours % 12;
+          var m = t.minutes;
 
-        var hourAngle = ((h + m / 60) * 30 - 90) * Math.PI / 180;
-        var minuteAngle = (m * 6 - 90) * Math.PI / 180;
+          var hourAngle = ((h + m / 60) * 30 - 90) * Math.PI / 180;
+          var minuteAngle = (m * 6 - 90) * Math.PI / 180;
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(hourAngle) * 7, cy + Math.sin(hourAngle) * 7);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#222222';
-        ctx.lineCap = 'round';
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(hourAngle) * 7, cy + Math.sin(hourAngle) * 7);
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = '#222222';
+          ctx.lineCap = 'round';
+          ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(minuteAngle) * 10, cy + Math.sin(minuteAngle) * 10);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#444444';
-        ctx.lineCap = 'round';
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(minuteAngle) * 10, cy + Math.sin(minuteAngle) * 10);
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#444444';
+          ctx.lineCap = 'round';
+          ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#222222';
-        ctx.fill();
+          ctx.beginPath();
+          ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#222222';
+          ctx.fill();
 
-        faviconLink.href = faviconCanvas.toDataURL('image/png');
-      }
+          faviconLink.href = faviconCanvas.toDataURL('image/png');
+        }
 
-      updateFavicon();
-      setInterval(updateFavicon, 60000);
+        updateFavicon();
+        setInterval(updateFavicon, 60000);
 
-      if ('wakeLock' in navigator) {
-        var wakeLockSentinel = null;
-        var wakeLockEnabled = true;
-        var wakeLockToggle = document.getElementById('wakeLockToggle');
-        var wakeLockLabel = document.getElementById('wakeLockLabel');
+        if ('wakeLock' in navigator) {
+          var wakeLockSentinel = null;
+          var wakeLockEnabled = true;
+          var wakeLockToggle = document.getElementById('wakeLockToggle');
+          var wakeLockLabel = document.getElementById('wakeLockLabel');
 
-        wakeLockLabel.removeAttribute('hidden');
-        wakeLockToggle.checked = true;
+          wakeLockLabel.removeAttribute('hidden');
+          wakeLockToggle.checked = true;
 
-        function requestWakeLock() {
-          if (!wakeLockEnabled) return;
-          navigator.wakeLock.request('screen').then(function (sentinel) {
-            wakeLockSentinel = sentinel;
-            wakeLockToggle.checked = true;
-            sentinel.addEventListener('release', function () {
-              wakeLockSentinel = null;
+          function requestWakeLock() {
+            if (!wakeLockEnabled) return;
+            navigator.wakeLock.request('screen').then(function (sentinel) {
+              wakeLockSentinel = sentinel;
+              wakeLockToggle.checked = true;
+              sentinel.addEventListener('release', function () {
+                wakeLockSentinel = null;
+              });
+            }).catch(function () {
+              wakeLockToggle.checked = false;
+              wakeLockEnabled = false;
             });
-          }).catch(function () {
-            wakeLockToggle.checked = false;
-            wakeLockEnabled = false;
+          }
+
+          requestWakeLock();
+
+          wakeLockToggle.addEventListener('change', function () {
+            wakeLockEnabled = this.checked;
+            if (wakeLockEnabled) {
+              requestWakeLock();
+            } else if (wakeLockSentinel) {
+              wakeLockSentinel.release();
+              wakeLockSentinel = null;
+            }
+          });
+
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible' && wakeLockEnabled) {
+              requestWakeLock();
+            }
           });
         }
 
-        requestWakeLock();
+        var container = document.querySelector('.clock-container');
+        var burnInStep = 0;
+        var burnInRadius = 6;
+        var burnInPositions = 8;
 
-        wakeLockToggle.addEventListener('change', function () {
-          wakeLockEnabled = this.checked;
-          if (wakeLockEnabled) {
-            requestWakeLock();
-          } else if (wakeLockSentinel) {
-            wakeLockSentinel.release();
-            wakeLockSentinel = null;
-          }
+        function applyBurnInShift() {
+          var angle = (burnInStep % burnInPositions) * (2 * Math.PI / burnInPositions);
+          var dx = Math.round(Math.cos(angle) * burnInRadius * 10) / 10;
+          var dy = Math.round(Math.sin(angle) * burnInRadius * 10) / 10;
+          container.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
+          burnInStep++;
+        }
+
+        setInterval(applyBurnInShift, 600000);
+
+        // Embed generator
+        var embedOverlay = document.getElementById('embedOverlay');
+        var embedLink = document.getElementById('embedLink');
+        var embedCloseBtn = document.getElementById('embedCloseBtn');
+        var embedTzInput = document.getElementById('embedTz');
+        var embedThemeSelect = document.getElementById('embedTheme');
+        var embedSecondsSelect = document.getElementById('embedSeconds');
+        var embedBorderSelect = document.getElementById('embedBorder');
+        var embedWidthInput = document.getElementById('embedWidth');
+        var embedHeightInput = document.getElementById('embedHeight');
+        var embedPreview = document.getElementById('embedPreview');
+        var embedCodeEl = document.getElementById('embedCode');
+        var embedCopyBtn = document.getElementById('embedCopyBtn');
+        var localBase = window.location.origin + window.location.pathname;
+        var prodBase = 'https://clocksimulator.com/';
+        var embedDebounceTimer;
+
+        function buildEmbedParams() {
+          var p = ['embed=true'];
+          var tz = embedTzInput.value.trim();
+          if (tz) p.push('tz=' + encodeURIComponent(tz));
+          var theme = embedThemeSelect.value;
+          if (theme !== 'dark') p.push('theme=' + theme);
+          var seconds = embedSecondsSelect.value;
+          if (seconds !== 'tick') p.push('seconds=' + seconds);
+          var border = embedBorderSelect.value;
+          if (border !== 'show') p.push('border=' + border);
+          return '?' + p.join('&');
+        }
+
+        function updateEmbed() {
+          var qs = buildEmbedParams();
+          var w = parseInt(embedWidthInput.value) || 200;
+          var h = parseInt(embedHeightInput.value) || 200;
+          embedPreview.src = localBase + qs;
+          embedPreview.width = Math.min(w, 120);
+          embedPreview.height = Math.min(h, 120);
+          var code = '<iframe src="' + prodBase + qs + '"\n' +
+            '  width="' + w + '" height="' + h + '" frameborder="0"\n' +
+            '  style="border:none; border-radius:50%; overflow:hidden;">\n' +
+            '</iframe>';
+          embedCodeEl.value = code;
+        }
+
+        function updateEmbedDebounced() {
+          clearTimeout(embedDebounceTimer);
+          embedDebounceTimer = setTimeout(updateEmbed, 400);
+        }
+
+        function openEmbedPanel(e) {
+          if (e) e.preventDefault();
+          closeAboutBubble();
+          clearTimeout(hideTimer);
+          embedOverlay.classList.add('visible');
+          updateEmbed();
+        }
+
+        function closeEmbedPanel() {
+          embedOverlay.classList.remove('visible');
+          embedPreview.src = 'about:blank';
+        }
+
+        embedLink.addEventListener('click', openEmbedPanel);
+        embedCloseBtn.addEventListener('click', closeEmbedPanel);
+        embedOverlay.addEventListener('click', function (e) {
+          if (e.target === embedOverlay) closeEmbedPanel();
         });
 
-        document.addEventListener('visibilitychange', function () {
-          if (document.visibilityState === 'visible' && wakeLockEnabled) {
-            requestWakeLock();
-          }
+        embedTzInput.addEventListener('input', updateEmbedDebounced);
+        embedThemeSelect.addEventListener('change', updateEmbed);
+        embedSecondsSelect.addEventListener('change', updateEmbed);
+        embedBorderSelect.addEventListener('change', updateEmbed);
+        embedWidthInput.addEventListener('input', updateEmbedDebounced);
+        embedHeightInput.addEventListener('input', updateEmbedDebounced);
+
+        embedCopyBtn.addEventListener('click', function () {
+          navigator.clipboard.writeText(embedCodeEl.value).then(function () {
+            var original = embedCopyBtn.textContent;
+            embedCopyBtn.textContent = 'Copied!';
+            setTimeout(function () { embedCopyBtn.textContent = original; }, 1500);
+          });
         });
       }
-
-      var container = document.querySelector('.clock-container');
-      var burnInStep = 0;
-      var burnInRadius = 6;
-      var burnInPositions = 8;
-
-      function applyBurnInShift() {
-        var angle = (burnInStep % burnInPositions) * (2 * Math.PI / burnInPositions);
-        var dx = Math.round(Math.cos(angle) * burnInRadius * 10) / 10;
-        var dy = Math.round(Math.sin(angle) * burnInRadius * 10) / 10;
-        container.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
-        burnInStep++;
-      }
-
-      setInterval(applyBurnInShift, 600000);
     })();
   </script>
 </body>
