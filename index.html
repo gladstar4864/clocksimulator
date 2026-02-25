@@ -216,6 +216,68 @@
       opacity: 1;
     }
 
+    .about-btn {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--tick);
+      cursor: pointer;
+      flex-shrink: 0;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .about-btn:hover {
+      opacity: 1;
+    }
+
+    .about-btn svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .about-bubble {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: rgba(30, 30, 30, 0.92);
+      color: #eee;
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .about-bubble.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.light-mode .about-bubble {
+      background: rgba(50, 50, 50, 0.92);
+      color: #fff;
+    }
+
+    .about-bubble a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 255, 255, 0.35);
+      text-underline-offset: 2px;
+    }
+
+    .about-bubble a:hover {
+      text-decoration-color: rgba(255, 255, 255, 0.7);
+    }
+
     .clock-container {
       width: 90vmin;
       height: 90vmin;
@@ -256,6 +318,17 @@
         <line x1="6" y1="17" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>
     </label>
+    <button class="about-btn" id="aboutBtn" aria-label="About">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="10" cy="6.5" r="1" fill="currentColor"/>
+        <line x1="10" y1="9.5" x2="10" y2="14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="about-bubble" id="aboutBubble">
+      Made by Timo Heimonen<br>
+      <a href="mailto:timo.heimonen@proton.me">timo.heimonen@proton.me</a>
+    </div>
   </div>
 
   <div class="clock-container">
@@ -354,7 +427,13 @@
       });
 
       var toggleWrapper = document.querySelector('.toggle-wrapper');
+      var aboutBtn = document.getElementById('aboutBtn');
+      var aboutBubble = document.getElementById('aboutBubble');
       var hideTimer;
+
+      function closeAboutBubble() {
+        aboutBubble.classList.remove('visible');
+      }
 
       function showToggle() {
         document.body.classList.remove('cursor-hidden');
@@ -363,14 +442,28 @@
         hideTimer = setTimeout(function () {
           toggleWrapper.classList.remove('visible');
           document.body.classList.add('cursor-hidden');
+          closeAboutBubble();
         }, 1000);
       }
+
+      aboutBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        aboutBubble.classList.toggle('visible');
+        clearTimeout(hideTimer);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!aboutBubble.contains(e.target) && e.target !== aboutBtn && !aboutBtn.contains(e.target)) {
+          closeAboutBubble();
+        }
+      });
 
       document.addEventListener('mousemove', showToggle);
       window.addEventListener('focus', showToggle);
       window.addEventListener('blur', function () {
         clearTimeout(hideTimer);
         toggleWrapper.classList.remove('visible');
+        closeAboutBubble();
       });
 
       var faviconCanvas = document.createElement('canvas');
