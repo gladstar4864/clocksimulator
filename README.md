@@ -43,13 +43,14 @@ Square:
 
 All parameters are optional and can be combined:
 
-| Parameter | Values | Default | Description |
-|-----------|--------|---------|-------------|
-| `embed`   | `true` | — | Activates embed mode (hides UI controls) |
-| `tz`      | IANA timezone | Local | Timezone, e.g. `Europe/Helsinki` |
-| `theme`   | `dark`, `light`, `transparent` | `dark` | Color theme |
-| `seconds` | `tick`, `smooth`, `hide` | `tick` | Second hand mode |
-| `border`  | `show`, `hide` | `show` | Clock border visibility |
+| Parameter  | Values | Default | Description |
+|------------|--------|---------|-------------|
+| `embed`    | `true` | — | Activates embed mode (hides UI controls) |
+| `tz`       | IANA timezone | Local | Timezone, e.g. `Europe/Helsinki` |
+| `theme`    | `dark`, `light`, `transparent` | `dark` | Color theme |
+| `seconds`  | `tick`, `smooth`, `hide` | `tick` | Second hand mode |
+| `border`   | `show`, `hide` | `show` | Clock border visibility |
+| `daynight` | `show`, `hide` | `hide` | Sun/moon indicator for day/night (requires `tz`) |
 
 ### Examples
 

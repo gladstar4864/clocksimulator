@@ -577,6 +577,21 @@
       <g id="ticks"></g>
       <g id="numbers"></g>
 
+      <g id="sunIcon" display="none">
+        <circle cx="100" cy="52" r="4" fill="var(--number)" opacity="0.55"/>
+        <line x1="100" y1="45.5" x2="100" y2="47" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="100" y1="57" x2="100" y2="58.5" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="93.5" y1="52" x2="95" y2="52" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="105" y1="52" x2="106.5" y2="52" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="95.4" y1="47.4" x2="96.4" y2="48.4" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="103.6" y1="55.6" x2="104.6" y2="56.6" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="95.4" y1="56.6" x2="96.4" y2="55.6" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+        <line x1="103.6" y1="48.4" x2="104.6" y2="47.4" stroke="var(--number)" stroke-width="1" stroke-linecap="round" opacity="0.55"/>
+      </g>
+      <g id="moonIcon" display="none">
+        <path d="M103.5 48.5a5 5 0 1 1-4.5 8 4 4 0 0 0 4.5-8Z" fill="var(--number)" opacity="0.55"/>
+      </g>
+
       <line id="hourHand" x1="100" y1="100" x2="100" y2="45"
             stroke="var(--hour-hand)" stroke-width="4.5" stroke-linecap="round"/>
       <line id="minuteHand" x1="100" y1="100" x2="100" y2="28"
@@ -635,6 +650,13 @@
           </select>
         </div>
         <div class="embed-field">
+          <label for="embedDayNight">Day/Night (requires tz)</label>
+          <select id="embedDayNight">
+            <option value="hide">Hide</option>
+            <option value="show">Show</option>
+          </select>
+        </div>
+        <div class="embed-field">
           <label for="embedWidth">Width (px)</label>
           <input type="number" id="embedWidth" value="200" min="50" max="1000">
         </div>
@@ -667,6 +689,8 @@
       const minuteHand = document.getElementById('minuteHand');
       const secondHand = document.getElementById('secondHand');
       const themeToggle = document.getElementById('themeToggle');
+      const sunIcon = document.getElementById('sunIcon');
+      const moonIcon = document.getElementById('moonIcon');
 
       const CX = 100, CY = 100, R = 85;
 
@@ -684,6 +708,8 @@
       var themeParam = params.get('theme');
       var secondsParam = params.get('seconds');
       var borderParam = params.get('border');
+      var daynightParam = params.get('daynight');
+      var showDayNight = daynightParam === 'show' && timezone;
 
       if (embedMode) {
         document.body.classList.add('embed-mode');
@@ -791,6 +817,12 @@
         hourHand.setAttribute('transform', 'rotate(' + hourAngle + ' 100 100)');
         minuteHand.setAttribute('transform', 'rotate(' + minuteAngle + ' 100 100)');
         secondHand.setAttribute('transform', 'rotate(' + secondAngle + ' 100 100)');
+
+        if (showDayNight) {
+          var isDay = t.hours >= 6 && t.hours < 18;
+          sunIcon.setAttribute('display', isDay ? 'inline' : 'none');
+          moonIcon.setAttribute('display', isDay ? 'none' : 'inline');
+        }
 
         requestAnimationFrame(updateClock);
       }
@@ -964,6 +996,7 @@
         var embedSecondsSelect = document.getElementById('embedSeconds');
         var embedBorderSelect = document.getElementById('embedBorder');
         var embedShapeSelect = document.getElementById('embedShape');
+        var embedDayNightSelect = document.getElementById('embedDayNight');
         var embedWidthInput = document.getElementById('embedWidth');
         var embedHeightInput = document.getElementById('embedHeight');
         var embedPreview = document.getElementById('embedPreview');
@@ -983,6 +1016,8 @@
           if (seconds !== 'tick') p.push('seconds=' + seconds);
           var border = embedBorderSelect.value;
           if (border !== 'show') p.push('border=' + border);
+          var daynight = embedDayNightSelect.value;
+          if (daynight === 'show') p.push('daynight=show');
           return '?' + p.join('&');
         }
 
@@ -1033,6 +1068,7 @@
         embedSecondsSelect.addEventListener('change', updateEmbed);
         embedBorderSelect.addEventListener('change', updateEmbed);
         embedShapeSelect.addEventListener('change', updateEmbed);
+        embedDayNightSelect.addEventListener('change', updateEmbed);
         embedWidthInput.addEventListener('input', updateEmbedDebounced);
         embedHeightInput.addEventListener('input', updateEmbedDebounced);
 
