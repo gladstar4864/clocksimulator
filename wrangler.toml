@@ -1,0 +1,3 @@
+[observability.logs]
+enabled = false
+preview_urls = false
