@@ -21,7 +21,13 @@
 ### Changed
 - Meta information changed.
 
+
 ## 1.0.2 - 2026-02-26
 
 ### Added
 - Ticking second hand now has a momentum overshoot effect for a more realistic mechanical feel.
+
+## 1.0.3 - 2026-02-26
+
+### Changed
+- Hour and minute hands now have pointed tips instead of rounded ends.
