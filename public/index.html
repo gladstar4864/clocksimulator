@@ -15,7 +15,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="ClockSimulator.com - Minimalist & Distraction-Free Analog Clock">
   <meta name="twitter:description" content="A clean, fullscreen analog clock simulator. View the current time with rendered clock.">
-  <meta name="version" content="1.0.5">
+  <meta name="version" content="1.0.6">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#000000">
@@ -712,7 +712,7 @@
       var timezone = null;
       if (tzParam) {
         try {
-          Intl.DateTimeFormat(undefined, { timeZone: tzParam });
+          new Intl.DateTimeFormat(undefined, { timeZone: tzParam });
           timezone = tzParam;
         } catch (e) {}
       }
@@ -902,6 +902,7 @@
           lastMoveTime = now;
           showToggle();
         });
+        document.addEventListener('touchstart', showToggle, { passive: true });
         window.addEventListener('focus', showToggle);
         window.addEventListener('blur', function () {
           clearTimeout(hideTimer);
@@ -983,8 +984,10 @@
                 wakeLockSentinel = null;
               });
             }).catch(function () {
-              wakeLockToggle.checked = false;
-              wakeLockEnabled = false;
+              if (document.visibilityState === 'visible') {
+                wakeLockToggle.checked = false;
+                wakeLockEnabled = false;
+              }
             });
           }
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6 - 2026-02-26
+
+### Fixed
+- Keep screen on now correctly activates when opening the app in a background tab.
+- Improved touch device support for showing controls.
+
 ## 1.0.5 - 2026-02-26
 
 ### Added
