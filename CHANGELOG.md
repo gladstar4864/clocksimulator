@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.13 - 2026-02-27
+
+### Added
+- Added PWA information section to the help-overlay window.
+
 ## 1.0.12 - 2026-02-27
 
 ### Changed
