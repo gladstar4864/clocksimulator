@@ -1,7 +1,6 @@
 # clocksimulator
 
 [![GitHub stars](https://img.shields.io/github/stars/timoheimonen/clocksimulator?style=for-the-badge)](https://github.com/timoheimonen/clocksimulator/stargazers)
-[![Clone repo](https://img.shields.io/badge/clone-clocksimulator-blue?style=for-the-badge&logo=git)](https://github.com/timoheimonen/clocksimulator.git)
 [![GitHub forks](https://img.shields.io/github/forks/timoheimonen/clocksimulator?style=for-the-badge)](https://github.com/timoheimonen/clocksimulator/network/members)
 
 A clean, fullscreen analog clock simulator built with plain HTML, CSS, and JavaScript.
