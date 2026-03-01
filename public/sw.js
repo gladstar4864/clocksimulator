@@ -1,6 +1,7 @@
 var CACHE_NAME = 'clocksimulator-v1.0.19';
 var ASSETS = [
   '/',
+  '/privacy.html',
   '/manifest.json',
   '/apple-touch-icon.png',
   '/android-chrome-192x192.png',
@@ -30,6 +31,11 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
+  if (event.request.method !== 'GET') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(function () {
