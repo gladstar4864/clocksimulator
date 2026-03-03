@@ -8,6 +8,7 @@ This is a minimalist, old-school web page with no trackers, no cookies, and no e
 
 <p align="center">
   <img src="screenshots/Clocksimulator_dark.png" width="320" alt="Clocksimulator dark theme" />
+  <img src="screenshots/Clocksimulator_Dashboard_dark.png" width="320" alt="Clocksimulator dashboard dark theme" />
 </p>
 
 ## Timezone support
