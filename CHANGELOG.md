@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3 - 2026-03-03
+
+### Fixed
+- Timezone offset for non-local clocks is now calculated using numeric values instead of string parsing, for more reliable behavior across browsers and environments.
+- Dashboard, embed, and help overlays no longer close when selecting text with the mouse inside the panel. Closing now requires a click that starts on the overlay backdrop.
+
 ## 1.1.2 - 2026-03-02
 
 ### Fixed
