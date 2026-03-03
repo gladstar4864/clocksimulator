@@ -38,7 +38,7 @@ SOFTWARE.
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="ClockSimulator.com - Minimalist & Distraction-Free Analog Clock">
   <meta name="twitter:description" content="A clean, open-source, and fullscreen analog clock simulator. View the current time with rendered clock.">
-  <meta name="version" content="1.1.2">
+  <meta name="version" content="1.1.3">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#000000">
@@ -1317,7 +1317,15 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
 
       function computeTzOffset(tz) {
         var now = new Date();
-        var tzTime = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+        var parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: tz, hour12: false,
+          year: 'numeric', month: 'numeric', day: 'numeric',
+          hour: 'numeric', minute: 'numeric', second: 'numeric'
+        }).formatToParts(now);
+        var p = {};
+        parts.forEach(function(part) { p[part.type] = parseInt(part.value, 10); });
+        var tzTime = new Date(p.year, p.month - 1, p.day,
+          p.hour === 24 ? 0 : p.hour, p.minute, p.second);
         return Math.round((tzTime.getTime() - now.getTime()) / 1000) * 1000;
       }
 
@@ -1625,6 +1633,8 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       const dashboardLink = document.getElementById('dashboardLink');
       let previousFocus = null;
       let activeTrapHandler = null;
+      let overlayMouseDownTarget = null;
+      document.addEventListener('mousedown', function (e) { overlayMouseDownTarget = e.target; });
 
       function trapFocus(overlay) {
         const focusable = overlay.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -1970,13 +1980,13 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
         helpLink.addEventListener('click', openHelpPanel);
         helpCloseBtn.addEventListener('click', closeHelpPanel);
         helpOverlay.addEventListener('click', function (e) {
-          if (e.target === helpOverlay) closeHelpPanel();
+          if (e.target === helpOverlay && overlayMouseDownTarget === helpOverlay) closeHelpPanel();
         });
 
         embedLink.addEventListener('click', openEmbedPanel);
         embedCloseBtn.addEventListener('click', closeEmbedPanel);
         embedOverlay.addEventListener('click', function (e) {
-          if (e.target === embedOverlay) closeEmbedPanel();
+          if (e.target === embedOverlay && overlayMouseDownTarget === embedOverlay) closeEmbedPanel();
         });
 
         embedTzInput.addEventListener('input', updateEmbedDebounced);
@@ -2125,7 +2135,7 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
         dashboardLink.addEventListener('click', openDashboardPanel);
         dashboardCloseBtn.addEventListener('click', closeDashboardPanel);
         dashboardOverlay.addEventListener('click', function (e) {
-          if (e.target === dashboardOverlay) closeDashboardPanel();
+          if (e.target === dashboardOverlay && overlayMouseDownTarget === dashboardOverlay) closeDashboardPanel();
         });
 
         dashboardAddBtn.addEventListener('click', addTimezone);
