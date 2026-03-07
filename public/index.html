@@ -306,13 +306,20 @@ SOFTWARE.
 
     .save-settings-toggle:has(input:disabled),
     .save-settings-toggle.disabled {
-      opacity: 0.45;
       cursor: not-allowed;
     }
 
     .save-settings-toggle:has(input:disabled) .toggle-slider,
-    .save-settings-toggle.disabled .toggle-slider {
+    .save-settings-toggle:has(input:disabled) span:not(.toggle-slider),
+    .save-settings-toggle.disabled .toggle-slider,
+    .save-settings-toggle.disabled span:not(.toggle-slider) {
+      opacity: 0.45;
       pointer-events: none;
+    }
+
+    #saveSettingsLabel[data-tooltip]::after {
+      left: 0;
+      transform: none;
     }
 
     .toggle-label[data-tooltip]::after {
@@ -321,19 +328,23 @@ SOFTWARE.
       left: 50%;
       top: calc(100% + 6px);
       transform: translateX(-50%);
-      background: rgba(30, 30, 30, 0.9);
+      background: #1e1e1e;
       color: #eee;
       font-size: 11px;
       padding: 4px 8px;
       border-radius: 4px;
-      white-space: nowrap;
+      white-space: normal;
+      width: max-content;
+      max-width: 200px;
+      text-align: center;
+      z-index: 20;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease 0.15s;
     }
 
     body.light-mode .toggle-label[data-tooltip]::after {
-      background: rgba(50, 50, 50, 0.9);
+      background: #323232;
       color: #fff;
     }
 
@@ -371,19 +382,23 @@ SOFTWARE.
       left: 50%;
       top: calc(100% + 6px);
       transform: translateX(-50%);
-      background: rgba(30, 30, 30, 0.9);
+      background: #1e1e1e;
       color: #eee;
       font-size: 11px;
       padding: 4px 8px;
       border-radius: 4px;
-      white-space: nowrap;
+      white-space: normal;
+      width: max-content;
+      max-width: 200px;
+      text-align: center;
+      z-index: 20;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease 0.15s;
     }
 
     body.light-mode .about-btn[data-tooltip]::after {
-      background: rgba(50, 50, 50, 0.9);
+      background: #323232;
       color: #fff;
     }
 
