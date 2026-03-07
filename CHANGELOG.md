@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.6 - 2026-03-07
+
+### Fixed
+- Timezone clock now shows the correct time during daylight saving time transitions in the viewer's local timezone.
+- Clean up CSS and variables.
+
+### Added
+- Toogle button animations
+- Window animations
+
 ## 1.1.5 2026-03-03
 
 ### Added
