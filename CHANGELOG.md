@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.9 - 2026-03-16
+
+### Changed
+- Removed animation from the menu-window embed-text for keeping page minimal and distraction free.
+
 ## 1.1.8 - 2026-03-09
 
 ### Added
