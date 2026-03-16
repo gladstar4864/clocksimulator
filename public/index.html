@@ -43,7 +43,7 @@ SOFTWARE.
   <meta name="twitter:title" content="clocksimulator.com - Minimalist & Distraction-Free Analog Clock">
   <meta name="twitter:description"
     content="A clean, sustainable, open-source, and fullscreen analog clock simulator. View the current time with rendered clock.">
-  <meta name="version" content="1.1.8">
+  <meta name="version" content="1.1.9">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="theme-color" content="#000000">
@@ -468,42 +468,6 @@ SOFTWARE.
 
     body.light-mode .about-bubble a:hover {
       text-decoration-color: rgba(0, 0, 0, 0.7);
-    }
-
-    #embedLink {
-      position: relative;
-      display: inline-block;
-    }
-
-    #embedLink::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: var(--number);
-      transform: scaleX(0);
-      transform-origin: left;
-    }
-
-    #embedLink.flash::after {
-      animation: embed-underline 0.6s ease-out;
-    }
-
-    @keyframes embed-underline {
-      0% {
-        transform: scaleX(0);
-      }
-
-      50% {
-        transform: scaleX(1);
-      }
-
-      100% {
-        transform: scaleX(0);
-        transform-origin: right;
-      }
     }
 
     .clock-container {
@@ -1913,11 +1877,6 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
         aboutBubble.classList.toggle('visible');
         document.body.classList.toggle('about-bubble-open', aboutBubble.classList.contains('visible'));
         clearTimeout(hideTimer);
-        if (aboutBubble.classList.contains('visible')) {
-          embedLink.classList.remove('flash');
-          void embedLink.offsetWidth;
-          embedLink.classList.add('flash');
-        }
       });
 
       document.addEventListener('click', function (e) {
