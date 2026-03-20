@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 - 2026-03-20
+
+### Added
+- VoiceOver time announcements: Screen readers now automatically announce the time every minute via an aria-live region on single clock use.
+
+### Improved
+- Accessibility: Clock element now has a live region for proactive time announcements instead of relying on passive aria-label changes.
+
 ## 1.1.9 - 2026-03-16
 
 ### Changed
