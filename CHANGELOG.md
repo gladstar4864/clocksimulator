@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 - 2026-03-22
+
+### Changed
+- Meta description/titles changed.
+
 ## 1.2.0 - 2026-03-20
 
 ### Added
