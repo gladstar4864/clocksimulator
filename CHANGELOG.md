@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 - 2026-03-22
+
+### Changed
+- Sun icon changed to same style as in dark/light toggle
+
 ## 1.2.1 - 2026-03-22
 
 ### Changed
