@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3 - 2026-03-23
+
+### Changed
+- DRY cleanup on index.html, total of 96 lines net removed.
+
 ## 1.2.2 - 2026-03-22
 
 ### Changed
