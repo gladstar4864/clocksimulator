@@ -949,16 +949,16 @@ SOFTWARE.
         stroke="var(--clock-border)" stroke-width="2.5" />
 
       <defs>
-        <filter id="hourShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <filter id="hourShadow" filterUnits="userSpaceOnUse" x="44" y="44" width="112" height="112">
           <feDropShadow id="hourDS" dx="0" dy="0" stdDeviation="0.6" flood-color="#000" flood-opacity="0.15" />
         </filter>
-        <filter id="minuteShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <filter id="minuteShadow" filterUnits="userSpaceOnUse" x="22" y="22" width="156" height="156">
           <feDropShadow id="minuteDS" dx="0" dy="0" stdDeviation="0.8" flood-color="#000" flood-opacity="0.2" />
         </filter>
-        <filter id="secondShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <filter id="secondShadow" filterUnits="userSpaceOnUse" x="14" y="14" width="172" height="172">
           <feDropShadow id="secondDS" dx="0" dy="0" stdDeviation="1.0" flood-color="#000" flood-opacity="0.25" />
         </filter>
-        <filter id="dotShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <filter id="dotShadow" filterUnits="userSpaceOnUse" x="89" y="89" width="22" height="22">
           <feDropShadow id="dotDS" dx="0" dy="0" stdDeviation="1.0" flood-color="#000" flood-opacity="0.25" />
         </filter>
       </defs>
@@ -1363,6 +1363,7 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       const daynightParam = params.get('daynight');
       const numbersParam = params.get('numbers');
       const shadowsParam = params.get('shadows');
+      const shadowsEnabled = shadowsParam !== 'false' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const burninParam = params.get('burnin');
       const showDayNight = daynightParam === 'show';
 
@@ -1523,7 +1524,7 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
         document.getElementById('clockBorder').setAttribute('stroke', 'none');
       }
 
-      if (shadowsParam === 'false') {
+      if (!shadowsEnabled) {
         [hourHand, minuteHand, secondHand, centerDot].forEach(function (el) {
           el.removeAttribute('filter');
         });
@@ -1695,7 +1696,7 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
           hourHand.setAttribute('transform', 'rotate(' + hourAngle + ' 100 100)');
           minuteHand.setAttribute('transform', 'rotate(' + minuteAngle + ' 100 100)');
 
-          if (shadowsParam !== 'false' && Math.abs(hourAngle - lastShadowAngle) > 0.5) {
+          if (shadowsEnabled && Math.abs(hourAngle - lastShadowAngle) > 0.5) {
             lastShadowAngle = hourAngle;
             const lightRad = hourAngle * Math.PI / 180;
             const sdx = -Math.sin(lightRad);
