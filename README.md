@@ -98,6 +98,10 @@ https://www.clocksimulator.com/?embed=true&seconds=smooth&border=hide
 https://www.clocksimulator.com/?embed=true&tz=America/New_York&theme=dark&seconds=hide
 ```
 
+## Accessibility
+
+When the operating system's **prefers-reduced-motion** setting is active, the second hand and clock hand shadows are automatically disabled to reduce on-screen animation.
+
 ## Privacy & Terms of service
 
 - [`www.clocksimulator.com/privacy.html`](https://www.clocksimulator.com/privacy.html)
