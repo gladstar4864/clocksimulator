@@ -412,11 +412,13 @@ SOFTWARE.
       text-decoration-color: rgba(255, 255, 255, 0.7);
     }
 
-    body.light-mode .about-bubble a {
+    body.light-mode .about-bubble a,
+    body.light-mode .help-panel a {
       text-decoration-color: rgba(0, 0, 0, 0.35);
     }
 
-    body.light-mode .about-bubble a:hover {
+    body.light-mode .about-bubble a:hover,
+    body.light-mode .help-panel a:hover {
       text-decoration-color: rgba(0, 0, 0, 0.7);
     }
 
@@ -1083,7 +1085,7 @@ SOFTWARE.
         </div>
       </div>
       <div class="embed-preview-wrap">
-        <iframe id="embedPreview" width="120" height="120" title="Clock preview"></iframe>
+        <iframe id="embedPreview" width="120" height="120" title="Clock preview" aria-label="Clock preview"></iframe>
       </div>
       <div class="embed-code-wrap">
         <textarea class="embed-code" id="embedCode" readonly rows="3" aria-label="Embed code"></textarea>
@@ -1163,7 +1165,7 @@ SOFTWARE.
         </div>
       </div>
       <div class="embed-preview-wrap dashboard-preview-wrap">
-        <iframe id="dashboardPreview" width="280" height="160" title="Dashboard preview"></iframe>
+        <iframe id="dashboardPreview" width="280" height="160" title="Dashboard preview" aria-label="Dashboard preview"></iframe>
       </div>
       <div class="embed-code-wrap">
         <textarea class="embed-code" id="dashboardUrl" readonly rows="2" aria-label="Dashboard URL"></textarea>
@@ -1802,11 +1804,14 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       }
 
       function copyWithFlash(text, btn) {
+        var original = btn.textContent;
         navigator.clipboard.writeText(text).then(function () {
-          var original = btn.textContent;
           btn.textContent = 'Copied!';
           setTimeout(function () { btn.textContent = original; }, 1500);
-        }).catch(function () { });
+        }).catch(function () {
+          btn.textContent = 'Failed';
+          setTimeout(function () { btn.textContent = original; }, 1500);
+        });
       }
 
       document.addEventListener('keydown', function (e) {
