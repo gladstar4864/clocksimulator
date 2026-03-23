@@ -5,6 +5,9 @@
 ### Changed
 - DRY cleanup on index.html, total of 96 lines net removed.
 
+### Improved
+- Clock hand shadows now use SVG feDropShadow filters instead of separate shadow elements, enabling GPU-accelerated rendering. Shadow direction updates are throttled to ~2x/min instead of every frame.
+
 ## 1.2.2 - 2026-03-22
 
 ### Changed

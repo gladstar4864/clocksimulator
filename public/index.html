@@ -949,14 +949,17 @@ SOFTWARE.
         stroke="var(--clock-border)" stroke-width="2.5" />
 
       <defs>
-        <filter id="shadowBlur1" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
-          <feGaussianBlur stdDeviation="0.6" />
+        <filter id="hourShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <feDropShadow id="hourDS" dx="0" dy="0" stdDeviation="0.6" flood-color="#000" flood-opacity="0.15" />
         </filter>
-        <filter id="shadowBlur2" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
-          <feGaussianBlur stdDeviation="0.8" />
+        <filter id="minuteShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <feDropShadow id="minuteDS" dx="0" dy="0" stdDeviation="0.8" flood-color="#000" flood-opacity="0.2" />
         </filter>
-        <filter id="shadowBlur3" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
-          <feGaussianBlur stdDeviation="1.0" />
+        <filter id="secondShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <feDropShadow id="secondDS" dx="0" dy="0" stdDeviation="1.0" flood-color="#000" flood-opacity="0.25" />
+        </filter>
+        <filter id="dotShadow" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <feDropShadow id="dotDS" dx="0" dy="0" stdDeviation="1.0" flood-color="#000" flood-opacity="0.25" />
         </filter>
       </defs>
 
@@ -986,22 +989,17 @@ SOFTWARE.
         <path d="M103.5 48.5a5 5 0 1 1-4.5 8 4 4 0 0 0 4.5-8Z" fill="var(--number)" opacity="0.55" />
       </g>
 
-      <path id="hourHandShadow" class="hour-hand-shadow" d="M97.25,100 L97.25,55 L100,50 L102.75,55 L102.75,100 Z"
-        fill="#000" stroke="none" opacity="0.15" filter="url(#shadowBlur1)" />
       <path id="hourHand" class="hour-hand" d="M97.25,100 L97.25,55 L100,50 L102.75,55 L102.75,100 Z"
-        fill="var(--hour-hand)" stroke="var(--hour-hand)" stroke-width="0.8" stroke-linejoin="round" />
-      <path id="minuteHandShadow" class="minute-hand-shadow" d="M98.5,100 L98.5,34 L100,28 L101.5,34 L101.5,100 Z"
-        fill="#000" stroke="none" opacity="0.2" filter="url(#shadowBlur2)" />
+        fill="var(--hour-hand)" stroke="var(--hour-hand)" stroke-width="0.8" stroke-linejoin="round"
+        filter="url(#hourShadow)" />
       <path id="minuteHand" class="minute-hand" d="M98.5,100 L98.5,34 L100,28 L101.5,34 L101.5,100 Z"
-        fill="var(--minute-hand)" stroke="var(--minute-hand)" stroke-width="0.8" stroke-linejoin="round" />
-      <line id="secondHandShadow" class="second-hand-shadow" x1="100" y1="115" x2="100" y2="22" stroke="#000"
-        stroke-width="1.2" stroke-linecap="round" opacity="0.25" filter="url(#shadowBlur3)" />
+        fill="var(--minute-hand)" stroke="var(--minute-hand)" stroke-width="0.8" stroke-linejoin="round"
+        filter="url(#minuteShadow)" />
       <line id="secondHand" class="second-hand" x1="100" y1="115" x2="100" y2="22" stroke="var(--second-hand)"
-        stroke-width="1.2" stroke-linecap="round" />
+        stroke-width="1.2" stroke-linecap="round" filter="url(#secondShadow)" />
 
-      <circle id="centerDotShadow" class="center-dot-shadow" cx="100" cy="100" r="3.5" fill="#000" opacity="0.25"
-        filter="url(#shadowBlur3)" />
-      <circle cx="100" cy="100" r="3.5" fill="var(--center-dot)" />
+      <circle id="centerDot" cx="100" cy="100" r="3.5" fill="var(--center-dot)"
+        filter="url(#dotShadow)" />
     </svg>
   </div>
 
@@ -1330,10 +1328,12 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       const hourHand = document.getElementById('hourHand');
       const minuteHand = document.getElementById('minuteHand');
       const secondHand = document.getElementById('secondHand');
-      const hourHandShadow = document.getElementById('hourHandShadow');
-      const minuteHandShadow = document.getElementById('minuteHandShadow');
-      const secondHandShadow = document.getElementById('secondHandShadow');
-      const centerDotShadow = document.getElementById('centerDotShadow');
+      const hourDS = document.getElementById('hourDS');
+      const minuteDS = document.getElementById('minuteDS');
+      const secondDS = document.getElementById('secondDS');
+      const dotDS = document.getElementById('dotDS');
+      const centerDot = document.getElementById('centerDot');
+      let lastShadowAngle = -999;
       const themeToggle = document.getElementById('themeToggle');
       const sunIcon = document.getElementById('sunIcon');
       const moonIcon = document.getElementById('moonIcon');
@@ -1510,7 +1510,6 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
         secondModeToggle.checked = false;
       } else if (secondsParam === 'hide') {
         secondHand.style.display = 'none';
-        secondHandShadow.style.display = 'none';
         secondModeToggle.checked = false;
         document.querySelector('.second-mode-toggle').style.display = 'none';
       }
@@ -1525,8 +1524,8 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       }
 
       if (shadowsParam === 'false') {
-        [hourHandShadow, minuteHandShadow, secondHandShadow, centerDotShadow].forEach(function (el) {
-          el.style.display = 'none';
+        [hourHand, minuteHand, secondHand, centerDot].forEach(function (el) {
+          el.removeAttribute('filter');
         });
       }
 
@@ -1578,8 +1577,8 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
           }
           cell.appendChild(svgClone);
 
-          svgClone.querySelectorAll('.hour-hand-shadow, .minute-hand-shadow, .second-hand-shadow, .center-dot-shadow').forEach(function (el) {
-            el.style.display = 'none';
+          svgClone.querySelectorAll('[filter]').forEach(function (el) {
+            el.removeAttribute('filter');
           });
 
           const label = document.createElement('div');
@@ -1696,20 +1695,19 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
           hourHand.setAttribute('transform', 'rotate(' + hourAngle + ' 100 100)');
           minuteHand.setAttribute('transform', 'rotate(' + minuteAngle + ' 100 100)');
 
-          if (shadowsParam !== 'false') {
+          if (shadowsParam !== 'false' && Math.abs(hourAngle - lastShadowAngle) > 0.5) {
+            lastShadowAngle = hourAngle;
             const lightRad = hourAngle * Math.PI / 180;
             const sdx = -Math.sin(lightRad);
             const sdy = Math.cos(lightRad);
-            hourHandShadow.setAttribute('transform',
-              'translate(' + (0.8 * sdx) + ',' + (0.8 * sdy) + ') rotate(' + hourAngle + ' 100 100)');
-            minuteHandShadow.setAttribute('transform',
-              'translate(' + (1.2 * sdx) + ',' + (1.2 * sdy) + ') rotate(' + minuteAngle + ' 100 100)');
-            if (!secondsHidden) {
-              secondHandShadow.setAttribute('transform',
-                'translate(' + (1.8 * sdx) + ',' + (1.8 * sdy) + ') rotate(' + secondAngle + ' 100 100)');
-            }
-            centerDotShadow.setAttribute('transform',
-              'translate(' + (1.8 * sdx) + ',' + (1.8 * sdy) + ')');
+            hourDS.setAttribute('dx', 0.8 * sdx);
+            hourDS.setAttribute('dy', 0.8 * sdy);
+            minuteDS.setAttribute('dx', 1.2 * sdx);
+            minuteDS.setAttribute('dy', 1.2 * sdy);
+            secondDS.setAttribute('dx', 1.8 * sdx);
+            secondDS.setAttribute('dy', 1.8 * sdy);
+            dotDS.setAttribute('dx', 1.8 * sdx);
+            dotDS.setAttribute('dy', 1.8 * sdy);
           }
 
           if (showDayNight) updateDayNightIcons(t.hours, sunIcon, moonIcon);
