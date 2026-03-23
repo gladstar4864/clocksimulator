@@ -98,10 +98,10 @@ https://www.clocksimulator.com/?embed=true&seconds=smooth&border=hide
 https://www.clocksimulator.com/?embed=true&tz=America/New_York&theme=dark&seconds=hide
 ```
 
-## Privacy
+## Privacy & Terms of service
 
-- Repo policy: [`PRIVACY.md`](PRIVACY.md)
-- Live site page: [`www.clocksimulator.com/privacy.html`](https://www.clocksimulator.com/privacy.html)
+- [`www.clocksimulator.com/privacy.html`](https://www.clocksimulator.com/privacy.html)
+- [`www.clocksimulator.com/TOS.html`](https://www.clocksimulator.com/TOS.html)
 
 ## License
 
