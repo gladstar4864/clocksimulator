@@ -1363,7 +1363,8 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       const daynightParam = params.get('daynight');
       const numbersParam = params.get('numbers');
       const shadowsParam = params.get('shadows');
-      const shadowsEnabled = shadowsParam !== 'false' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const shadowsEnabled = shadowsParam !== 'false' && !reducedMotion;
       const burninParam = params.get('burnin');
       const showDayNight = daynightParam === 'show';
 
@@ -1504,12 +1505,13 @@ www.clocksimulator.com/?tz=UTC,Europe/Helsinki,America/New_York,Asia/Tokyo&amp;r
       let secondModeTick = true;
       const secondModeToggle = document.getElementById('secondModeToggle');
       secondModeToggle.checked = true;
-      const secondsHidden = secondsParam === 'hide';
+      const secondsHidden = secondsParam === 'hide' || reducedMotion;
 
-      if (secondsParam === 'smooth') {
+      if (secondsParam === 'smooth' && !reducedMotion) {
         secondModeTick = false;
         secondModeToggle.checked = false;
-      } else if (secondsParam === 'hide') {
+      }
+      if (secondsHidden) {
         secondHand.style.display = 'none';
         secondModeToggle.checked = false;
         document.querySelector('.second-mode-toggle').style.display = 'none';

@@ -7,6 +7,8 @@
 
 ### Improved
 - Clock hand shadows now use SVG feDropShadow filters instead of separate shadow elements, enabling GPU-accelerated rendering. Shadow direction updates are throttled to ~2x/min instead of every frame.
+- Shadow filter regions tightened to match actual hand sweep areas, reducing GPU compositing work by ~58%. Center dot filter reduced from 200×200 to 22×22 SVG units.
+- Shadows and the second hand are now automatically disabled when the OS prefers-reduced-motion setting is active.
 
 ## 1.2.2 - 2026-03-22
 
